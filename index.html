@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <style>
+        a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 112px;
+            height: 56px;
+            margin: 10px;
+            font-size: 16px;
+            background: #03a9f4;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            transition: .3s;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .12), 0 2px 2px 0 rgba(0, 0, 0, .24);
+        }
+
+        a:hover {
+            opacity: .7;
+        }
+    </style>
+</head>
+
+<body>
+    <a href class="fn-ajax" data-id="1">商品1</a>
+    <a href class="fn-ajax" data-id="2">商品2</a>
+    <a href class="fn-ajax" data-id="3">商品3</a>
+    <script defer>
+        $(() => {
+            const url = new URL(location);
+
+            $(document).ready(function () {
+                const param = url.searchParams.get('id');
+
+                if (param === '') {
+                    return;
+                }
+
+                createModalContent(`http://localhost:3000/posts/${param}`, {
+                    afterClose: () => ejectUrlParam('id')
+                });
+            });
+
+            $('.fn-ajax').on('click', function (e) {
+                e.preventDefault();
+                const param = $(this).data('id');
+
+                createModalContent(`http://localhost:3000/posts/${param}`, {
+                    afterLoad: () => insertUrlParam('id', param),
+                    afterClose: () => ejectUrlParam('id')
+                });
+            });
+
+            function createModalContent(url, opts) {
+                $.ajax(url)
+                    .done(data => {
+                        let template = `
+                            <div>
+                                <img src="https://placehold.jp/40/${data.color}/ffffff/500x300.png?text=商品${data.id}の画像">
+                                <div>${data.title}</div>
+                                <div>${data.content}</div>
+                            </div>
+                        `;
+
+                        $.fancybox.open({
+                            src: template,
+                            type: 'html',
+                            opts
+                        });
+                    })
+            }
+
+            function insertUrlParam(key, value) {
+                url.searchParams.set(key, value);
+                let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + url.searchParams.toString();
+                window.history.pushState({ path: newurl }, '', newurl);
+            }
+
+            function ejectUrlParam(key) {
+                url.searchParams.delete(key);
+                const protocol = window.location.protocol;
+                const host = window.location.host;
+                const pathname = window.location.pathname;
+                const params = url.searchParams.toString();
+                let newurl = `${protocol}//${host}${pathname}${params !== '' ? `?${params}` : ''}`;
+
+                window.history.pushState({ path: newurl }, '', newurl);
+            }
+        });
+    </script>
+</body>
+
+</html>

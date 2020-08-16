@@ -1,0 +1,25 @@
+{
+  "name": "modal-url-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "json-server": "0.16.1"
+  },
+  "scripts": {
+    "serve": "npx http-server",
+    "build": "json-server --watch data.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inukko/modal-url-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inukko/modal-url-demo/issues"
+  },
+  "homepage": "https://github.com/inukko/modal-url-demo#readme"
+}
